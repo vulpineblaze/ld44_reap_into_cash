@@ -40,7 +40,7 @@ function main(){
 	var worldBound = 1600;
 
 	var globalFXVolume= 0.3;
-	var globalMusicVolume= 0.0;
+	var globalMusicVolume= 0.3;
 
 	var cursors;
 	var rockKey;
@@ -297,12 +297,13 @@ function main(){
 
 	function cleanup(){
 		player.kill();
-    	cashText.text = "Click to Restart!";
     	game.input.onTap.addOnce(restart,this);
     	music.stop();
     	game.camera.setPosition(0,0);
     	pokes.removeAll();
 		baddies.removeAll();
+    	cashText.text = "Click to Restart!";
+    	cashText.bringToTop()
 	}
 
 	function restart () {
