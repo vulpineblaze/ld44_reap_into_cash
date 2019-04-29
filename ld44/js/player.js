@@ -3,8 +3,8 @@ var playerVel = 300;
 
 function playerCreate(game, playerGroup){
     var player;
-   	player = playerGroup.create(game.world.centerX, game.world.centerY, 'dude');
-    player.name="dude"
+   	player = playerGroup.create(game.world.centerX, game.world.centerY, 'reap');
+    player.name="reap"
 
     game.physics.arcade.enable(player);
 
@@ -24,7 +24,12 @@ function playerCreate(game, playerGroup){
 
 
 
-function playerMovement(cursors, player){
+function playerMovement(game, cursors, player){
+
+    if(game.input.activePointer.isDown && game.physics.arcade.distanceToPointer(player) > 10){
+        game.physics.arcade.moveToPointer(player, playerVel*150);
+    }
+
 	player.body.velocity.x *= 0.01;
     player.body.velocity.y *= 0.01;
 

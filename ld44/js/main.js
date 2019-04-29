@@ -13,14 +13,16 @@ function main(){
 
 	    game.load.image('ground', 'img/rip_grass.png');
 	    game.load.image('vert', 'img/rip_grass_vertical.png');
-	    game.load.spritesheet('dude', 'img/reaper_no_scythe_sprite(74x144).png', 26, 36,12);
-	    game.load.spritesheet('baddie', 'img/reaper_no_scythe_sprite(74x144).png', 26, 36,12);
+	    game.load.spritesheet('reap', 'img/reaper_no_scythe_sprite(74x144).png', 26, 36,12);
+	    game.load.spritesheet('baddiesheet', 'img/reaper_no_scythe_sprite(74x144).png', 26, 36,12);
+	    game.load.spritesheet('pokesheet', 'img/tahubacem_poke_spritesheet_halfed.png', 16, 31,12);
 	    game.load.image('background','img/brown-soil-texture-background_1308-20483.jpg');
 
 	    game.load.image('rock', 'img/rock_free_sprite(16x12).png');
-	    game.load.image('poke', 'img/tahubacem_poke_sprite(19x36).png');
-	    game.load.image('end', 'img/the_end.png');
-	    game.load.image('end_lose', 'img/the_end_lose.png');
+	    // game.load.image('poke', 'img/tahubacem_poke_sprite(19x36).png');
+	    game.load.image('end', 'img/win_screen.png');
+	    game.load.image('end_lose', 'img/lose_screen.png');
+	    game.load.image('the_start', 'img/dead_like_me_parody_background(800x600).png');
 
 		game.load.audio('reapsong', ['audio/ReapSong.mp3', 
         	'audio/ReapSong.ogg']);
@@ -36,6 +38,7 @@ function main(){
 	var verts;
 	var pokes;
 	var baddies;
+	var music;
 
 	var worldBound = 1600;
 
@@ -50,6 +53,7 @@ function main(){
 
 	var cash = 10;
 	var cashWin = 30;
+	var cashTextHeader = "SOULCASH: ";
 	var cashText = "";
 
 	var rockVel = 500;
@@ -68,21 +72,26 @@ function main(){
 	var baddieCount=5;
 	var baddieTimerDelay = 2000;
 
+	var animThreshold = 30;
+
 	var the_end;
 	var the_end_lose;
+	var the_start;
+	var the_start_delay=1000;
+	var the_start_doOnce = true;
 
 
 	function create() {
 
-		game.add.tileSprite(0, 0, 1600, 1600, 'background');
+		game.add.tileSprite(0, 0, worldBound, worldBound, 'background');
 
-	    game.world.setBounds(0, 0, 1600, 1600);
+	    game.world.setBounds(0, 0, worldBound, worldBound);
 
 	    game.physics.startSystem(Phaser.Physics.ARCADE);
 
-	    music = game.add.audio('reapsong');
+	    music = game.add.audio('reapsong', globalMusicVolume, true);
 	    music.play();
-	    music.volume = globalMusicVolume;
+	    // music.volume = globalMusicVolume;
 
 		badkillpoke = game.add.audio('badkillpoke');
 		badkillplayer = game.add.audio('badkillplayer');
@@ -130,7 +139,7 @@ function main(){
 
 
 
-	    cashText = game.add.text(16, 16, 'CASH: '+cash, { fontSize: '32px', fill: '#6f6' });
+	    cashText = game.add.text(16, 16, cashTextHeader+cash, { fontSize: '32px', fill: '#6f6' });
 	    cashText.fixedToCamera = true;
 
 	    rockKey = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
@@ -147,17 +156,21 @@ function main(){
 	    pokes = game.add.group();
 	    pokes.enableBody = true;
 	    pokes.physicsBodyType = Phaser.Physics.ARCADE;
-	    pokes.createMultiple(pokeCount, 'poke');
+	    pokes.createMultiple(pokeCount, 'pokesheet');
 	    pokes.setAll('outOfBoundsKill', true);
 	    pokes.setAll('checkWorldBounds', true);
+	    
 
 
 	    baddies = game.add.group();
 	    baddies.enableBody = true;
 	    baddies.physicsBodyType = Phaser.Physics.ARCADE;
-	    baddies.createMultiple(baddieCount, 'baddie');
+	    baddies.createMultiple(baddieCount, 'baddiesheet');
 	    baddies.setAll('outOfBoundsKill', true);
 	    baddies.setAll('checkWorldBounds', true);
+	    
+
+		animationSetup();
 
 	    doAllTimers();
 
@@ -166,10 +179,22 @@ function main(){
 		the_end.visible=false;
 	    the_end_lose = game.add.sprite(0, 0, 'end_lose');
 		the_end_lose.visible=false;
+	    the_start = game.add.sprite(0, 0, 'the_start');
+		the_start.visible=false;
 	    
 	}
 
 	function update() {
+
+		if(the_start_doOnce){
+			cleanup();
+			the_start.visible = true;
+			startTimer = game.time.create(false);
+		    startTimer.repeat(the_start_delay,1, restart, this);
+		    startTimer.start();
+			the_start_doOnce = false;
+
+		}
 
     	game.physics.arcade.collide(baddies, platforms);
     	game.physics.arcade.collide(pokes, platforms);
@@ -185,7 +210,7 @@ function main(){
 	    game.physics.arcade.overlap(player, baddies, collectBaddie, null, this);
 	    game.physics.arcade.overlap(baddies, pokes, collectBaddiePoke, null, this);
 
-	    var swipeDirection = playerMovement(cursors, player);
+	    var swipeDirection = playerMovement(game, cursors, player);
 
         if(cash <= 0){
         	cleanup();
@@ -215,13 +240,13 @@ function main(){
 	function collectPoke (rock, poke) {
 	    poke.kill();
 	    cash += 1;
-	    cashText.text = 'CASH: ' + cash;
+	    cashText.text = cashTextHeader + cash;
 	    playerkillpoke.play();
 	}
 	function collectBaddie (player, baddie) {
 	    baddie.kill();
 	    cash -= baddieCash;
-	    cashText.text = 'CASH: ' + cash;
+	    cashText.text = cashTextHeader + cash;
 	    badkillplayer.play();
 	}
 	function collectBaddiePoke (baddie, poke) {
@@ -236,14 +261,24 @@ function main(){
 	}
 
 	function updatePokes(){
+		// console.log("poke",pokeCount, pokes.countLiving(), pokes.countDead());
 		pokes.forEachAlive(function(poke){
         	var {x,y} = getRandBoundVelocity(pokeVel);
         	poke.body.velocity.x += x;
         	poke.body.velocity.y += y;
+        	var anim = getAnimationByVector(poke.body.velocity.x,poke.body.velocity.y,"poke_");
+        	try { 
+				poke.animations.play(anim);
+			}
+			catch(err) {
+				console.log(anim, poke);
+			}
 	    });
 		pokes.forEachDead(function(poke){
 			var {x,y} = getRandPosition();
         	poke.reset(x,y);
+        	poke.checkWorldBounds = true;
+        	poke.outOfBoundsKill = true;
 	    	poke.tint = pokeSkin[Math.floor(Math.random() * pokeSkin.length)];
 
 	    	var {x,y} = getRandBoundVelocity(pokeVel);
@@ -255,15 +290,21 @@ function main(){
 	}
 
 	function updateBaddies(){
+		// console.log("baddie",baddieCount, baddies.countLiving(), baddies.countDead());
 		baddies.forEachAlive(function(baddie){
         	game.physics.arcade.moveToObject(baddie,player,baddieHuntVel);
 	    	var {x,y} = getRandBoundVelocity(baddieVel);
         	baddie.body.velocity.x += x;
         	baddie.body.velocity.y += y;
+        	var anim = getAnimationByVector(baddie.body.velocity.x,baddie.body.velocity.y,"baddie_");
+        	baddie.animations.play(anim);
+        	// console.log(anim);
 	    });
 		baddies.forEachDead(function(baddie){
 			var {x,y} = getRandPosition();
         	baddie.reset(x,y);
+        	baddie.checkWorldBounds = true;
+        	baddie.outOfBoundsKill = true;
 		    baddie.tint = 0x6666ff;
         	game.physics.arcade.moveToObject(baddie,player,baddieHuntVel);
 
@@ -277,7 +318,38 @@ function main(){
 
 
 
+	function getAnimationByVector(x,y,prefix){
+		var isRight = false;
+		var isDown = false;
+		var ret_val = "";
+		if(animThreshold > Math.abs(x) && animThreshold > Math.abs(y)){
+			return prefix + "stop";
+		}
+        if(x == Math.max(Math.abs(x), x)){
+        	// x = 10 ; x = -10 // 10 == 10 (R); -10 != 10 (L)
+        	isRight = true;
+        }
+        if(y == Math.max(Math.abs(y), y)){
+        	// x = 10 ; x = -10 // 10 == 10 (R); -10 != 10 (L)
+        	isDown = true;
+        }
 
+        if(Math.abs(y) == Math.max(Math.abs(x), Math.abs(y))){
+        	// y == max -> vert higher magnitude , else horz
+        	if(isDown){
+        		ret_val = prefix + "down";
+        	}else{
+        		ret_val = prefix + "up";
+        	}
+        }else{
+        	if(isRight){
+        		ret_val = prefix + "right";
+        	}else{
+        		ret_val = prefix + "left";
+        	}
+        }
+        return ret_val;
+	}
 
 
 	function getRandPosition(){
@@ -294,6 +366,19 @@ function main(){
 		return {x,y};
 	}
 
+	function animationSetup(){
+		baddies.callAll('animations.add', 'animations', 'baddie_down', [0, 1, 2], 10, true);
+	    baddies.callAll('animations.add', 'animations', 'baddie_up', [9,10,11], 10, true);
+	    baddies.callAll('animations.add', 'animations', 'baddie_left', [3,4,5], 10, true);
+	    baddies.callAll('animations.add', 'animations', 'baddie_right', [6,7,8], 10, true);
+	    baddies.callAll('animations.add', 'animations', 'baddie_stop', [1], 0);
+
+	    pokes.callAll('animations.add', 'animations', 'poke_down', [0, 1, 2], 10, true);
+	    pokes.callAll('animations.add', 'animations', 'poke_up', [3,4,5], 10, true);
+	    pokes.callAll('animations.add', 'animations', 'poke_left', [9,10,11], 10, true);
+	    pokes.callAll('animations.add', 'animations', 'poke_right', [6,7,8], 10, true);
+	    pokes.callAll('animations.add', 'animations', 'poke_stop', [1], 0);
+	}
 
 	function cleanup(){
 		player.kill();
@@ -303,7 +388,9 @@ function main(){
     	pokes.removeAll();
 		baddies.removeAll();
     	cashText.text = "Click to Restart!";
-    	cashText.bringToTop()
+    	cashText.bringToTop();
+	    baddieTimer.stop();
+	    pokeTimer.stop();
 	}
 
 	function restart () {
@@ -315,22 +402,29 @@ function main(){
 		if(the_end_lose){
 			the_end_lose.visible = false;
 		}
+		if(the_start){
+			the_start.visible = false;
+		}
+		
 
 	    cash = 10;
-	    cashText.text = 'CASH: ' + cash;
+	    cashText.text = cashTextHeader + cash;
 
 	    player.revive();
 		game.time.reset();
 
-	    pokes.createMultiple(pokeCount, 'poke');
-	    baddies.createMultiple(baddieCount, 'baddie');
+	    pokes.createMultiple(pokeCount, 'pokesheet');
+	    baddies.createMultiple(baddieCount, 'baddiesheet');
 
 	    doAllTimers();
+	    animationSetup();
 	    // console.log(baddieTimer.running);
 
 	    music.play();
 
 	    console.log("restart_done: time:"+game.time.totalElapsedSeconds());
+
+	    
 
 
 
