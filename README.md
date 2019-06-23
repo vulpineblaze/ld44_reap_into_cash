@@ -1,8 +1,5 @@
 # ld44_reap_into_cash
-ld44_reap_into_cash Ludum Dare #44 game 
-
-# Project Name
-> Here goes your awesome project description!
+> ld44_reap_into_cash Ludum Dare #44 game 
 
 ## Table of contents
 * [General info](#general-info)
