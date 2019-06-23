@@ -43,7 +43,7 @@ Project has met requirements.
 State if you are open to contributions and what your requirements are for accepting them.
 
 ## Inspiration
-This game was inspired by the American T.V. show Dead Like Me
+This game was inspired by the American T.V. show "Dead Like Me."
 
 ## Contact
 Created by [@vulpineblaze](https://github.com/vulpineblaze) - feel free to contact me!
