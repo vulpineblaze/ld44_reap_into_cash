@@ -1,5 +1,5 @@
-# ld44_reap_into_cash
-> ld44_reap_into_cash Ludum Dare #44 game 
+# Reap Into Cash
+> Reap Into Cash is a Ludum Dare #44 game 
 
 ## Table of contents
 * [General info](#general-info)
@@ -21,9 +21,7 @@ Put possible docs / coda link here.
 ![Example screenshot](./img/screenshot.png)
 
 ## Technologies
-* Tech 1 - version 1.0
-* Tech 2 - version 2.0
-* Tech 3 - version 3.0
+* Phaser v2.12.0
 
 ## Setup
 Describe how to install / setup your local environement / add link to demo version.
@@ -33,10 +31,6 @@ If it only runs in a specific context like a particular programming language ver
 
 ### Usage
 Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Code Examples
-Show examples of usage:
-`put-your-code-here`
 
 ## Features
 List of features ready and TODOs for future development
@@ -49,7 +43,7 @@ To-do list:
 * Wow improvement to be done 2
 
 ## Status
-Project is: _in progress_, _finished_, _no longer continue_ and why?
+Project has met requirements.
 
 ## Contributing
 State if you are open to contributions and what your requirements are for accepting them.
