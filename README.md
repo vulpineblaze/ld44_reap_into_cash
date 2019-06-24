@@ -14,7 +14,7 @@
 * [Contact](#contact)
 
 ## General info
-* Reap Into Cash was created for the Ludum Dare game competition: ldjam.com/about
+* Reap Into Cash was created for the Ludum Dare game competition: (ldjam.com/about)
 * It is an in broswer game where your reaper character follows your mouse.  Move them around to collect souls to gain soulcash.  Avoid the blue figures who drain your soulcash.  Collect 30 soulcash to win.
 
 ## Screenshots
