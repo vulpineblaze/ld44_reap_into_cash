@@ -44,7 +44,7 @@ Load via browser and play per instructions!
 Project has met requirements.
 
 ## Inspiration
-This game was inspired by my wife, Sarah, the prompts, and the American T.V. show "Dead Like Me."
+This game was inspired by my wife, the prompts, and the American T.V. show "Dead Like Me."
 
 ## Contact
 Created by [@vulpineblaze](https://github.com/vulpineblaze) - feel free to contact me!
