@@ -17,7 +17,7 @@
 Reap Into Cash was created for the Ludum Dare game competition.
 
 ## Screenshots
-[test](https://github.com/vulpineblaze/ld44_reap_into_cash/blob/master/image_source/screenshot.png)
+![Game Play Screen](https://github.com/vulpineblaze/ld44_reap_into_cash/blob/master/image_source/screenshot.png)
 
 ## Technologies
 * Phaser v2.12.0
