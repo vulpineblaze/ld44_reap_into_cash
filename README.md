@@ -42,7 +42,7 @@ Load via browser and play per instructions!
 * 0 points is a loss
 
 ## Status
-Project has met requirements.
+Project is: _finished_
 
 ## Inspiration
 This game was inspired by my wife, the prompts, and the American T.V. show "Dead Like Me."
